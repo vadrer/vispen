@@ -1,0 +1,40 @@
+{{ # vi: syn=perl
+@stubs = (
+['=ignore_everywhere/=cut', <<'EOS'=~s/^#//gmr],
+#=ignore_everywhere
+#
+#=cut
+EOS
+['=sql/=Cut', <<'EOS'=~s/^#//gmr],
+#=sql
+#select 1 as one
+#=Cut
+EOS
+['=perl/=Cut', <<'EOS'=~s/^#//gmr =~ s/'/''/gr],
+#=perl
+#join ',', 'a'..'z';
+#=Cut
+EOS
+['{code:none}/{code}', <<'EOS'=~s/^#//gmr],
+#{code:none}
+#{code}
+EOS
+);
+
+join "",
+map {
+    my ($m, $t) = @$_;
+"amenu Perl&5.stubs.$m	:call appendbufline(bufname(),line('.'),[".join(',',map{"'$_'"} split /\n/,$t)."])<CR>\n"
+} @stubs;
+
+}}\
+fun! Stubs()
+    let xx = inputlist( [ {{join ',',map {"'" . ($_+1)." $stubs[$_]->[0]'"} 0 .. $#stubs}} ] )
+    {{join '', map {"    if xx == $_+1
+        call appendbufline(bufname(),line('.'),[".join(',',map{"'$_'"} split /\n/,$stubs[$_]->[1])."])
+    endif
+"} 0 .. $#stubs}}\
+endfun
+
+echo "{{scalar @stubs}} stubs loaded"
+
