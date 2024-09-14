@@ -231,8 +231,8 @@ sub __append {
 }
 
 $vim::width //= 123;
-$vim::respect_title_width //= 0; # TODO NYI - ширина колонок такова, чтобы поместился заголовок
-$vim::title_rows //= 99; # максимальное количество строк заголовка таблицы
+$vim::respect_title_width //= 0; # TODO NYI - fit title rows
+$vim::title_rows //= 99; # max number of rows in table title
 
 $vim::anchorp //= 0;
 $vim::untemplatep //= 1;
@@ -360,10 +360,10 @@ EOS
     my $need_remove_old = 1;
 
     if (defined $x0 && $::curbuf->Get($x0) =~ /^=(sqlm?|Sqlm?|sQlm?|sqLm?|sQLm?|perl|Perl|pErl|PERL)\b\s*(.*?)\s*$/) {
-        # sqL, sQL - чтобы не выставлять jirasyntax
+        # sqL, sQL - so to avoid jirasyntax
         # sQl, sQL - $::dbh1
         # pErl - untemplate then perl
-        # PERL - в режиме 'no strict;'
+        # PERL - same as perl but in 'no strict;' mode
         my $verb=$1;
         $ifperl = lc($verb) eq 'perl' ? 1 : $ifperl;
         $perlshowcode = $verb eq 'Perl' || $verb eq 'pErl';
@@ -373,7 +373,7 @@ EOS
         $ifsqlselect = 1 if $verb eq 'Sql';
         $ifsql1 = 1 if ($verb eq 'sQl' or $verb eq 'sQL' );
         $jira_syntax = $ifperl ? 0 : ($verb ne 'sqL' and $verb ne 'sQL');
-        $sqlname = $2=~s/\s.*$//r; # отбросим всё после пробела: там может быть коммент
+        $sqlname = $2=~s/\s.*$//r; # after space there could be comment - strip it
         $x1 = List::Util::first {
                 $::curbuf->Get($_) =~ /^=cut/i
             } $row+1 .. $::curbuf->Count();
@@ -565,12 +565,11 @@ EOS
                 $::r{$sqlname} = $aref;
                 $::colnames{$sqlname} = \@names;
             } else {
-                # не задали имя - сгенерируем для удобной последующей навигации
+                # name not specified - then generate name, so to allow for easier navigation (TODO - document this technique)
                 $sqlname = ($ifsql1 ? '17' : 't') . '_' . join('_',@names) =~s/\W+//gr;
                 my $elapsed = Time::HiRes::tv_interval($t0, [Time::HiRes::gettimeofday()]);
-                $res .= "{anchor:${sqlname}_$elapsed}\n" if $vim::anchorp; # - для jira. TODO для отсальных
+                $res .= "{anchor:${sqlname}_$elapsed}\n" if $vim::anchorp; # - for jira. TODO for other formats
                 $::r{$sqlname} = 1; # TODO - как делать подчистку?
-                # надо сделать поисковый шорткат, и если не находится - то чтобы удалять
             }
         }
     } else {
