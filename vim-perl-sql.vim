@@ -9,8 +9,10 @@
 " - when text is selected, execute selected text and show it in echo/VIM::Msg
 
   amenu Perl&5.-sep2-  :<CR>
+  amenu Perl&5.&config.$vim::anchorp.0	:perl $vim::anchorp=0<CR>
   amenu Perl&5.&config.$vim::anchorp.1	:perl $vim::anchorp=1<CR>
-  amenu Perl&5.&config.$vim::anchorp.1	:perl $vim::anchorp=1<CR>
+  amenu Perl&5.&config.$vim::untemplatep.0	:perl $vim::untemplatep=0<CR>
+  amenu Perl&5.&config.$vim::untemplatep.1	:perl $vim::untemplatep=1<CR>
   amenu Perl&5.&config.$vim::width.123	:perl $vim::width=123<CR>
   amenu Perl&5.&config.$vim::width.246	:perl $vim::width=246<CR>
   amenu Perl&5.&config.$vim::title_rows.1	:perl $vim::title_rows=1<CR>
@@ -233,6 +235,7 @@ $vim::respect_title_width //= 0; # TODO NYI - ширина колонок так
 $vim::title_rows //= 99; # максимальное количество строк заголовка таблицы
 
 $vim::anchorp //= 0;
+$vim::untemplatep //= 1;
 $vim::ignore_cols //= 0;
 $vim::mariadb //= 'MariaDB';
 $vim::html_save_to //= 'C:\work\ow\copypaste\html\tab.html';
@@ -290,26 +293,28 @@ EOS
 	return;
     }
 
-    # get lines before current point to 'untemplate'
-    my $pretext = join "\n", $::curbuf->Get(0 .. $row-1);
-    $pretext =~ s/^=(?:sqlm?|perl)\b.*?(?:(?:^=cut *\n)|\Z)//sigm; # do not untemplste =sql/=perl ... =cut
-    $pretext =~ s/^=(?:ignore_everywhere|ie|sqlm?|Sqlm?|sQlm?|sqLm?|sQLm?|perl|Perl|pErl|PERL)\b.*?(?:(?:^=cut *\n)|\Z)//sgm;
-    $Text::Template::ERROR = '';
-    my ($del0, $del1, @delims) = ('{','}');   # delimiters {{{...}}} or {{...}} or none/default
-    if ($pretext=~/^(\{\{\{?)/) {
-	$del0 = $1;
-	$del1 = '}'x length($1);
-	@delims = (DELIMITERS=>[$del0, $del1]);
-    }
-    my $dummy_s = Text::Template->new(
-        TYPE   => 'STRING',
-        SOURCE => ($arg==1?"$del0$::reset$del1":($arg==100?"$del0$::super_reset$del1":"")) . $pretext,
-        @delims,
-        BROKEN => sub{die "error in template: [$Text::Template::ERROR] \$@=$@, please recheck!"},
-    )->fill_in();
-    if ($Text::Template::ERROR) {
-	VIM::Msg("\$Text::Template::ERROR=[$Text::Template::ERROR]","ErrorMsg");
-	return;
+    if ($vim::untemplatep) {
+	# get lines before current point to 'untemplate'
+	my $pretext = join "\n", $::curbuf->Get(0 .. $row-1);
+	$pretext =~ s/^=(?:sqlm?|perl)\b.*?(?:(?:^=cut *\n)|\Z)//sigm; # do not untemplste =sql/=perl ... =cut
+	$pretext =~ s/^=(?:ignore_everywhere|ie|sqlm?|Sqlm?|sQlm?|sqLm?|sQLm?|perl|Perl|pErl|PERL)\b.*?(?:(?:^=cut *\n)|\Z)//sgm;
+	$Text::Template::ERROR = '';
+	my ($del0, $del1, @delims) = ('{','}');   # delimiters {{{...}}} or {{...}} or none/default
+	if ($pretext=~/^(\{\{\{?)/) {
+	    $del0 = $1;
+	    $del1 = '}'x length($1);
+	    @delims = (DELIMITERS=>[$del0, $del1]);
+	}
+	my $dummy_s = Text::Template->new(
+	    TYPE   => 'STRING',
+	    SOURCE => ($arg==1?"$del0$::reset$del1":($arg==100?"$del0$::super_reset$del1":"")) . $pretext,
+	    @delims,
+	    BROKEN => sub{die "error in template: [$Text::Template::ERROR] \$@=$@, please recheck!"},
+	)->fill_in();
+	if ($Text::Template::ERROR) {
+	    VIM::Msg("\$Text::Template::ERROR=[$Text::Template::ERROR]","ErrorMsg");
+	    return;
+	}
     }
 
     #=sql
