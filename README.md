@@ -21,11 +21,12 @@ Contents
 Intro
 -----
 
-vim-perl-sql is a plugin for [Vim][], providing support for quick execution
+vispen is a plugin for [Vim][], providing support for quick execution
 of SQL which could be enriched with perl code.
 
 Mostly this could be considered as SQL client, which has tight integration with
-Perl.
+Perl, and also this could be considered as improved REPL functionality for Perl
+(read-eval-print-loop).
 
 TODO demo
 
@@ -151,11 +152,8 @@ that are conservatively turned off by default that you may want to turn on.
 Quick Feature Summary
 -----
 
-* Super-fast identifier completer including tags files and syntax elements
-* Intelligent suggestion ranking and filtering
-* File and path suggestions
-* Suggestions from Vim's omnifunc
-* UltiSnips snippet suggestions
+* perl-execution of current line or =Perl/=Cut block
+* SQL-execution of current line or =SQL/=Cut block
 
 User Guide
 ----------
@@ -186,14 +184,40 @@ line like this:
 perl $vim::anchorp = 1
 ```
 
-### The `$vim::anchorp` option
+### `$vim::anchorp`
 
-This option, 'anchor predicate', controls whether {ancrhor:xxx\_time} will be
-inserted after execution.
-
-Setting this option to the true value
+This option, 'anchor predicate', controls whether `{ancrhor:xxx_time}` will be
+inserted after execution. This could be considered as marker, which then could
+facilitate in searching through your SQL requests. In JIRA reports this marker
+is unvisible.
 
 Default: `0`
+
+### `$vim::html_save_to`
+
+File name where html will be saved for SQL results in HTML format.
+
+Default: `C:\work\ow\copypaste\html\tab.html`
+
+### `$vim::title_rows`
+
+Specifies max number of rows in table title for SQL results in ASCII format.
+
+Default: `99`
+
+### `$vim::width`
+
+Specifies width of table for SQL results in ASCII format.
+
+Default: `123`
+
+### `$vim::untemplatep`
+
+This option, 'untemplate predicate', controls whether untemplating of lines
+before cursor will be performed before execution of single line or =Perl/=Cut
+block or =sql/=Cut blocks.
+
+Default: `1`
 
 [vundle]: https://github.com/VundleVim/Vundle.vim#about
 [vimrc]: https://vimhelp.appspot.com/starting.txt.html#vimrc
