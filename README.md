@@ -155,14 +155,74 @@ Quick Feature Summary
 * perl-execution of current line or =Perl/=Cut block
 * SQL-execution of current line or =SQL/=Cut block
 
+Here's a quick demo:
+
+TODO
+
 User Guide
 ----------
 
 ### General Usage
 
-Here's a quick demo: 
+2 keys are assigned by this plugin - `F7` key and `F9` key. `F7` if for Perl execution,
+`F9` is for SQL execution.
 
-TODO
+After the `F7` or `F9` key is pressed, in case when `$vim::untemplatep` is true,
+then all lines before the cuurent line are untemplated with the `tt_untemplate` function.
+However these lines keep unchanged, so only side-effect makes sence. This could
+be useful to initialize `$::dbh` or `$::dbh1` variables.
+
+For the `F7` key, current line is executed as perl code, after that result of this
+execution will be appended after the current line.
+
+For the `F9` key, following considerations happens:
+
+* the plugin checks lines before the current line until it seen whitespace line or
+line starting with `=` or `}` characters.
+
+* If whitespace line is found sooner than line starting with `=` or `}`, then
+single line is to be executed
+
+* otherwise, in case that line starting one of the following ways:
+`=sql`, `=Sql`, `sQl`, `sqL`, `sQL`, `perl`, `Perl`, `pErl`, `PERL`
+then multiline command is
+executed, in this case vispen searches for closing `=cut` (or `=Cut`) and executes
+the block.
+
+* for all other cases current single line is executed as `SQL` code.
+
+Interpretation of these block listed below.
+
+#### `=sql`
+
+means general sql query
+
+### `=sqL`
+
+same as `=sql` but table presented in ASCII form instead of JIRA syntax.
+
+#### `=Sql`
+
+SQL query will be interpreted as select request, so output will be represented
+as table.
+
+#### `=sQl` and `=sQL`
+
+like `=sql` but all requests will be performed through `$::dbh1` variable, so
+allowing alternate connection to SQL server. Mnemonic: this is a bit twisted
+and hidden way (probably to an important server where nothing should be broken)
+therefore `=sQl` instead of `=sql` so no one will find this hidden way.
+
+`=sQL` for ASCII table, `=sQl` for JIRA syntax.
+
+#### `=perl`
+
+general perl block of code to be executed, in strict mode.
+
+#### `=PERL`
+
+general perl block of code to be executed, in no strict mode.
+
 
 Commands
 --------
