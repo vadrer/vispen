@@ -7,14 +7,10 @@ Contents
 - [Intro](#intro)
 - [Installation](#installation)
     - [Requirements](#requirements)
-    - [Linux 64-bit](#linux-64-bit)
-    - [Windows](#windows)
-    - [Full Installation Guide](#full-installation-guide)
 - [Quick Feature Summary](#quick-feature-summary)
 - [User Guide](#user-guide)
     - [General Usage](#general-usage)
 - [Commands](#commands)
-- [Functions](#functions)
 - [Options](#options)
 
 
@@ -66,55 +62,38 @@ Two modules are required:
 For Neovim, you must have a perl 5 runtime and the Neovim perl
 extensions. See Neovim's `:help provider-perl` for how to set that up.
 
-The policy is to support the perl version that's available in the latest
-Ubuntu LTS (similar to our Vim version policy). We don't increase the Perl
-runtime version without a reason, though. Typically, we do this when the current
-Perl version we're using goes out of support. At that time we will typically
-pick a version that will be supported for a number of years.
+## copy plugin itself
 
-### Linux 64-bit
+Copy vispen plugin file to some folder from where you will activate it and map it
+to some key in `$HOME/_vimrc` or `$VIMHOME/_vimrc` file:
 
-The following assume you're using Ubuntu 22.04.
+```viml
+map <F11> :source c:\VimScripts\vim-perl-sql.vim<CR>
+```
 
-#### Quick start, installing all completers
+vispen comes with sane defaults for its options, however you probably will want
+to override your initial template, etc.
+So you could create your config file and include it into the chain too:
 
-- Install vispen plugin via [Vundle][]
-- Install Vim and Perl
+```viml
+map <F11> :source c:\VimScripts\vim-perl-sql.vim<bar>:source c:\VimScripts\vim-perl-cfg.vim<CR>
+```
+
+You may take the one from the repository and edit it as you see fit.
+
+## inctall Perl and Vim (if not done yet)
+
+### Linux
+
+For Ubuntu:
 
 ```
 apt install vim-nox libtext-template-perl
 ```
 
-#### Explanation for the quick start
-
-Make sure you have a supported version of Vim with Perl5 support with the
-required modules. The latest LTS of Ubuntu is the minimum platform for simple
-installation.
-
-Install vispen with [Vundle][].
-
-That's it. You're done. Refer to the _User Guide_ section on how to use vispen.
-Don't forget that if you want the C-family semantic completion engine to work,
-you will need to provide the compilation flags for your project to vispen. It's all
-in the User Guide.
-
-vispen comes with sane defaults for its options, but you still may want to take a
-look at what's available for configuration. There are a few interesting options
-that are conservatively turned off by default that you may want to turn on.
-
 ### Windows
 
-#### Quick start, installing all completers
-
-- Install vim-perl-sql plugin via [Vundle][]
-- Install Vim and Perl
-
-```
-cd vim-perl-sql
-perl install.pl
-```
-
-#### Explanation for the quick start
+Download [Vim][] from official site, and install corresponding strawberry perl.
 
 Make sure you have a supported Vim version with Perl support. You
 can check the version and which Perl is supported by typing `:version` inside
@@ -124,16 +103,7 @@ Take note of the Vim architecture, i.e. 32 or
 using a 64-bit client. [Daily updated installers of 32-bit and 64-bit Vim with
 Perl support][vim-win-download] are available.
 
-
-This option is required by vispen. Note that it does not prevent you from editing a
-file in another encoding than UTF-8.  You can do that by specifying [the `++enc`
-argument][++enc] to the `:e` command.
-
-Install vispen with [Vundle][].
-
-Download and install the following software:
-
-- [Perl][perl-win-download]. Be sure to pick the version
+Download and install [Perl][perl-win-download]. Be sure to pick the version
   corresponding to your Vim architecture. It is _Windows x86_ for a 32-bit Vim
   and _Windows x86-64_ for a 64-bit Vim.
   Additionally, the version of Perl you install must match up exactly with
@@ -142,12 +112,6 @@ Download and install the following software:
   similar to `-DDYNAMIC_PERL_DLL=\"perl532.dll\"`. This indicates
   that Vim is looking for Perl 5.32. You'll need one or the other installed,
   matching the version number exactly.
-
-That's it. You're done. Refer to the _User Guide_ section on how to use vispen.
-
-vispen comes with sane defaults for its options, but you still may want to take a
-look at what's available for configuration. There are a few interesting options
-that are conservatively turned off by default that you may want to turn on.
 
 Quick Feature Summary
 -----
