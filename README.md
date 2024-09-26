@@ -157,39 +157,84 @@ the block.
 
 Interpretation of these block listed below.
 
-#### `=sql`
+#### `=sql/=Cut` block
 
 means general sql query
 
-### `=sqL`
+### `=sqL/=Cut` block
 
 same as `=sql` but table presented in ASCII form instead of JIRA syntax.
 
-#### `=Sql`
+#### `=Sql/=Cut` block
 
 SQL query will be interpreted as select request, so output will be represented
 as table.
 
-#### `=sQl` and `=sQL`
+#### `=sQl/=Cut` and `=sQL/=Cut` block
 
-like `=sql` but all requests will be performed through `$::dbh1` variable, so
+like `=sql/=Cut` but all requests will be performed through `$::dbh1` variable, so
 allowing alternate connection to SQL server. Mnemonic: this is a bit twisted
 and hidden way (probably to an important server where nothing should be broken)
 therefore `=sQl` instead of `=sql` so no one will find this hidden way.
 
 `=sQL` for ASCII table, `=sQl` for JIRA syntax.
 
-#### `=perl`
+#### `=perl/=Cut` block
 
 general perl block of code to be executed, in strict mode.
 
-#### `=PERL`
+#### `=PERL/=Cut` block
 
 general perl block of code to be executed, in no strict mode.
+
+#### `=Perl/=Cut` block
+
+Same as `=Perl/=Cut` but there will be {code:perl}...{code} inserted just before
+result, and result itself will be in `{code:nonr}...{code}` for JIRA.
+
+#### `=pErl/=Cut` block
+
+Same as `=Perl/=Cut` but before execution untemplating will be performed. Do not
+use it, try to find another way to find solution to your problem, because
+untemplating of perl code itself isn't a good idea (unlike SQL:)), and hence it
+is named `=pErl`.
+
+All these blocks accept name, options and comment this way:
+
+```
+=sql name/f=format comment
+```
+
+Name is arbitrary name for the given SQL statement, if specified - then special
+hash `%::r` will hold result of the query.
+
+format is:
++ - ASCII table
+h - HTML table
+j - JIRA syntax
+x - line-by-line format
+o - outwiker wiki format
+O - verbose outwiker wiki format
+t - coma-separated list prefixed with `--`
+T - tab-separated list prefixed with `--`
 
 
 Commands
 --------
+
+### The `:perl execute_here` command
+
+For example:
+
+```perl
+```
+
+### The `:perl suggest_columns` command
+
+For example:
+
+```perl
+```
 
 ### The `:perl tt_untemplate` command
 
