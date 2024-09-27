@@ -498,27 +498,28 @@ EOS
                 # my $titlerows = 1+List::Util::max map {int(length($names[$_])/$w0[$_])} 0 .. $#$aref; # TODO
                 $res .=
                     $captop .  #┌─┐
-                    (   # имена полей в заголовке, с переносами строк
+                    (   # field names in title, with line wrapping
                         join "", map {
                             my $line = $_;
                             $bar . (join $bar, map {
-                                # строка № $line в заголовке
+                                # line № $line in title row
                                 sprintf "%$w0[$_].$w0[$_]s", substr($names[$_],$line*$w0[$_])
                             } 0 .. $#w) . "$bar\n"
                         } 0 .. List::Util::min List::Util::max (0, map {int(length($names[$_]) / $w0[$_])-1} 0 .. $#w), $vim::title_rows
                     ) .
                     $capm .    #├─┤
-                    # сами строки, с переносами
+                    # lines themselves, with wrapping
                     join ("", map {
                       my $a=$_;
                       if ($tot > $vim::width) {
                           # wraping factor
-                          # идеально - надо смотреть типы полей, числам давать определённое пространство, остальное - пропорционально
-                          # тут - упрощённо
-                          # распределяем пропорционально максимальной ширине на ширину $vim::width-$#w+2
+                          # ideally we should consider field types, should allocate some space to numbers and remaining
+			  # should be spread proportionally
+                          # here - simplified way
+                          # distribute proportionally to maximal width to the width $vim::width-$#w+2
                           #
                           my @writeto;
-                          # пишем строку $str шириной $width в скаляр $writeto с позиции $pos
+                          # write string $str width $width into scalar $writeto starting from $pos
                           for (my $i=0; $i<=$#w; $i++) {
                               my ($str,$width,$totwidth) = ($a->[$i]=~y{\n}{ }r, $w0[$i], $tot);
                               my $curpos = 0;
@@ -569,7 +570,7 @@ EOS
                 $sqlname = ($ifsql1 ? '17' : 't') . '_' . join('_',@names) =~s/\W+//gr;
                 my $elapsed = Time::HiRes::tv_interval($t0, [Time::HiRes::gettimeofday()]);
                 $res .= "{anchor:${sqlname}_$elapsed}\n" if $vim::anchorp; # - for jira. TODO for other formats
-                $::r{$sqlname} = 1; # TODO - как делать подчистку?
+                $::r{$sqlname} = 1; # TODO - cleanup
             }
         }
     } else {

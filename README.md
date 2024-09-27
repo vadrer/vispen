@@ -128,6 +128,11 @@ User Guide
 
 ### General Usage
 
+Pressing `F9` on empty line will insert some predefined lines of text, which then
+could be nicely edited and used for initialisation of the `$::dbh` variable, and also
+some example lines. (those are from `$vim::initial_lines`, change it in your config
+for your purposes)
+
 2 keys are assigned by this plugin - `F7` key and `F9` key. `F7` if for Perl execution,
 `F9` is for SQL execution.
 
@@ -236,6 +241,13 @@ For example:
 ```perl
 ```
 
+### The `:perl tt_open_or_switchto` command
+
+For example:
+
+```perl
+```
+
 ### The `:perl tt_untemplate` command
 
 For example:
@@ -267,6 +279,12 @@ Default: `0`
 File name where html will be saved for SQL results in HTML format.
 
 Default: `C:\work\ow\copypaste\html\tab.html`
+
+### `$vim::initial_lines`
+
+Specifies initial lines which will be inserted on pressing `F9` key on empty line.
+
+Default: - some few lines of text
 
 ### `$vim::title_rows`
 
