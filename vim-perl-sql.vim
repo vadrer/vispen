@@ -195,23 +195,8 @@ sub delete_this_from_r {
 
 sub __vypcol {
     my ($names, $aref) = @_;
-    # выпиливаем эти колонки:
-    for my $vypcol (qw/
-        secur_mc
-        secur_uk
-        polzovatel_dobavleniya_zapisi
-        ip_adres_dobavleniya_zapisi
-        data_dobavleniya_zapisi
-        vremya_dobavleniya_zapisi
-        polzovatel_redaktirovaniya_zapisi
-        ip_adres_redaktirovaniya_zapisi
-        data_redaktirovaniya_zapisi
-        vremya_redaktirovaniya_zapisi
-        polzovatel_akceptovaniya_zapisi
-        ip_adres_akceptovaniya_zapisi
-        data_akceptovaniya_zapisi
-        vremya_akceptovaniya_zapisi
-        interface_row_color /) {
+    # remove columns listed in $vim::ignore_cols
+    for my $vypcol (split /,/, $vim::ignore_cols) {
         my $x = List::Util::first {$names->[$_] eq $vypcol} 0 .. $#$names;
         if (defined $x) {
             splice @$names, $x, 1;
@@ -236,9 +221,9 @@ $vim::title_rows //= 99; # max number of rows in table title
 
 $vim::anchorp //= 0;
 $vim::untemplatep //= 1;
-$vim::ignore_cols //= 0;
+$vim::ignore_cols //= '';
 $vim::mariadb //= 'MariaDB';
-$vim::html_save_to //= 'C:\work\ow\copypaste\html\tab.html';
+$vim::html_save_to //= 'tab.html';
 
 sub execute_here {
     my $arg = shift || 0;
@@ -249,12 +234,23 @@ sub execute_here {
     #my $cmd = decode(utf8=>$::curbuf->Get($row));
     my $cmd = $::curbuf->Get($row);
 
-    if ($cmd =~ m/^([?]?)( *)$/) {
+    if ($cmd =~ m/^([?c]?)( *)$/) {
 	# if empty line - then suggest something to user
 	if ($row>0) {$row--}
 	if ($1 eq '?') {
 	    $row = __append($row, <<'EOS');
-# press <F9> on empty line or with only 1 char at beginning - will get you some predefined text, which will be usefully added
+# press <F9> on empty line to get predefined lines for $::dbh initialization
+# or on a line containing only '?' to get this help
+# or on a line containing only 'c' to get config which you could edit
+EOS
+	} elsif ($1 eq 'c') {
+	    $row = __append($row, <<"EOS");
+\$vim::untemplatep  = $vim::untemplatep; # perform in-memory untemplate of lines before cursor?
+\$vim::width        = $vim::width;  # table width
+\$vim::anchorp      = $vim::anchorp; # add anchor with elapsed time after each request
+\$vim::title_rows   = $vim::title_rows; # max number of rows in table title
+\$vim::ignore_cols  = '$vim::ignore_cols'; # columns to ignore, coma separated list
+\$vim::html_save_to = '$vim::html_save_to'; # file name where HTML output is to be saved
 EOS
 	} else {
 	    $row = __append($row, $vim::initial_lines || <<'EOS');
@@ -273,8 +269,8 @@ undef $::dbh
 VIM::Msg('abcd','Comment')
 VIM::Msg('efgh','ErrorMsg')
 
-# конфиг:
-$vim::anchorp = 0
+# config:
+$vim::untemplatep = 0
 $vim::width = 123;
 
 # for <F9> - SQL execution:

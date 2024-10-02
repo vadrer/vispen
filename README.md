@@ -250,9 +250,23 @@ For example:
 
 ### The `:perl tt_untemplate` command
 
+Performs untemplating of the current file into a new one using the
+`Text::Template->fill_in`function. New file name is constructed by removing
+`.in` suffix if it exists, or by appending the `.untempl` suffix.
+This new file will be opened in a new tab, except if that file was already
+opened, then plugin will switch into that tab.
+
+One optional parameter could be used - if true, then contents of the `$::reset`
+variable will be prepended at the very beginning. Typically there should be
+`undef $dbh` so during untemplating reconnection to database will happen.
+
+Please save the file before executing this.
+
 For example:
 
 ```perl
+perl tt_untemplate()
+perl tt_untemplate(1)
 ```
 
 Options
@@ -278,7 +292,13 @@ Default: `0`
 
 File name where html will be saved for SQL results in HTML format.
 
-Default: `C:\work\ow\copypaste\html\tab.html`
+Default: `tab.html`
+
+### `$vim::ignore_cols`
+
+Columns to skip for SQL requests, coma separated list
+
+Default: ``
 
 ### `$vim::initial_lines`
 
@@ -303,6 +323,9 @@ Default: `123`
 This option, 'untemplate predicate', controls whether untemplating of lines
 before cursor will be performed before execution of single line or =Perl/=Cut
 block or =sql/=Cut blocks.
+
+Untemplating in single-line SQL, single-line perl and `=sql/=Cut` block performed
+regardless of this option.
 
 Default: `1`
 
