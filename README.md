@@ -194,8 +194,9 @@ general perl block of code to be executed, in no strict mode.
 
 #### `=Perl/=Cut` block
 
-Same as `=Perl/=Cut` but there will be {code:perl}...{code} inserted just before
-result, and result itself will be in `{code:nonr}...{code}` for JIRA.
+Same as `=Perl/=Cut` but there will be `{code:perl}...{code}` inserted just before
+the result, and result itself will be in `{code:none}...{code}` so to make
+construction of JIRA reports easier.
 
 #### `=pErl/=Cut` block
 
@@ -208,20 +209,22 @@ All these blocks accept name, options and comment this way:
 
 ```
 =sql name/f=format comment
+...
+=Cut
 ```
 
 Name is arbitrary name for the given SQL statement, if specified - then special
 hash `%::r` will hold result of the query.
 
-format is:
-+ - ASCII table
-h - HTML table
-j - JIRA syntax
-x - line-by-line format
-o - outwiker wiki format
-O - verbose outwiker wiki format
-t - coma-separated list prefixed with `--`
-T - tab-separated list prefixed with `--`
+Format is:
+* `+` - ASCII table
+* `h` - HTML table
+* `j` - JIRA syntax
+* `x` - line-by-line format
+* `o` - outwiker wiki format
+* `O` - verbose outwiker wiki format
+* `t` - coma-separated list prefixed with `--`
+* `T` - tab-separated list prefixed with `--`
 
 
 Commands
